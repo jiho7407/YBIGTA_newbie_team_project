@@ -24,7 +24,7 @@ class UserService:
         # elif new_user.email == "admin":
         #     raise ValueError("회원가입에 실패했습니다.")
         
-        if self.repo.get_user_by_email(new_user.email) is None:
+        if self.repo.get_user_by_email(new_user.email):
             raise ValueError("User already Exists.")
 
         else:
