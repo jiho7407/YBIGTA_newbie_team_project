@@ -6,8 +6,15 @@ class UserService:
         self.repo = userRepoitory
 
     def login(self, user_login: UserLogin) -> User:
+        """
+        로그인 함수
+        1. 이메일로 유저 조회
+        2. 유저가 없으면 예외처리
+        3. 비밀번호 비교
+        4. 일치하지 않으면 예외처리
+        5. 유저 반환
+        """
         
-        ## TODO
         user = self.repo.get_user_by_email(user_login.email)
         if not user:
             raise ValueError("User not Found.")
@@ -16,15 +23,15 @@ class UserService:
         return user
         
     def register_user(self, new_user: User) -> User:
+        """
+        회원가입 함수
+        1. 이메일로 유저 조회
+        2. 유저가 이미 있으면 예외처리
+        3. 유저 저장
+        4. 저장된 유저 반환
+        """
 
-        ## TODO
-        # if new_user.email is None:
-        #     raise ValueError("회원가입에 실패했습니다.")
-
-        # elif new_user.email == "admin":
-        #     raise ValueError("회원가입에 실패했습니다.")
-        
-        if self.repo.get_user_by_email(new_user.email) is None:
+        if self.repo.get_user_by_email(new_user.email):
             raise ValueError("User already Exists.")
 
         else:
@@ -33,8 +40,14 @@ class UserService:
         return new_user
 
     def delete_user(self, email: str) -> User:
+        """
+        회원탈퇴 함수
+        1. 이메일로 유저 조회
+        2. 유저가 없으면 예외처리
+        3. 유저 삭제
+        4. 삭제된 유저 반환
+        """
 
-        ## TODO
         user = self.repo.get_user_by_email(email)
         if user is None:
             raise ValueError("User not Found.")
@@ -45,8 +58,14 @@ class UserService:
         return deleted_user
 
     def update_user_pwd(self, user_update: UserUpdate) -> User:
+        """
+        비밀번호 변경 함수
+        1. 이메일로 유저 조회
+        2. 유저가 없으면 예외처리
+        3. 비밀번호 변경
+        4. 변경된 유저 반환
+        """
 
-        ## TODO
         target_user = self.repo.get_user_by_email(user_update.email)
         if not target_user:
             raise ValueError("User not Found.")
