@@ -18,14 +18,14 @@ class UserService:
     def register_user(self, new_user: User) -> User:
 
         ## TODO
-        if new_user.email is None:
-            raise ValueError("회원가입에 실패했습니다.")
+        # if new_user.email is None:
+        #     raise ValueError("회원가입에 실패했습니다.")
 
-        elif new_user.email == "admin":
-            raise ValueError("회원가입에 실패했습니다.")
+        # elif new_user.email == "admin":
+        #     raise ValueError("회원가입에 실패했습니다.")
         
-        elif self.repo.get_user_by_email(new_user.email) is None:
-            raise ValueError("회원가입에 실패했습니다.")
+        if self.repo.get_user_by_email(new_user.email) is None:
+            raise ValueError("User already Exists.")
 
         else:
             new_user = self.repo.save_user(new_user)
