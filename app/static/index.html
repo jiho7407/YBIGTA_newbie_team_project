@@ -1,182 +1,376 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>User Management</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            text-align: center;
+      @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap");
+
+      :root {
+        --naver-green: #00a344; /* 어두운 초록색으로 변경 */
+        --naver-green-hover: #008b3a; /* 호버 색상도 변경 */
+        --danger-color: #ff0000;
+        --danger-hover-color: #d60000;
+        --background-color: #f5f6f7;
+        --container-background: #ffffff;
+        --text-primary: #202020;
+        --text-secondary: #606060;
+        --border-color: #ebebeb;
+        --input-border-color: #dadada;
+        --box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        --border-radius: 10px;
+      }
+
+      body {
+        font-family: "Noto Sans KR", sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: var(--background-color);
+        color: var(--text-primary);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        box-sizing: border-box;
+        overflow: hidden; /* 눈 효과가 화면을 벗어나지 않도록 */
+      }
+
+      .container {
+        max-width: 450px;
+        width: 100%;
+        background: var(--container-background);
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius);
+        padding: 30px 40px;
+        box-shadow: var(--box-shadow);
+        z-index: 1; /* 눈 효과보다 위에 있도록 */
+      }
+
+      h1 {
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--naver-green);
+        text-align: center;
+        margin-bottom: 25px;
+      }
+
+      h2 {
+        font-size: 20px;
+        font-weight: 500;
+        color: var(--text-primary);
+        text-align: left;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      form {
+        display: flex;
+        flex-direction: column;
+      }
+
+      input {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 12px;
+        font-size: 16px;
+        border: 1px solid var(--input-border-color);
+        border-radius: 6px;
+        box-sizing: border-box;
+        transition: border-color 0.2s, box-shadow 0.2s;
+      }
+
+      input:focus {
+        outline: none;
+        border-color: var(--naver-green);
+        box-shadow: 0 0 0 2px rgba(0, 163, 68, 0.2); /* 변경된 초록색에 맞춰 수정 */
+      }
+
+      button {
+        padding: 14px 20px;
+        margin-top: 8px;
+        font-size: 18px;
+        font-weight: 700;
+        cursor: pointer;
+        border: none;
+        border-radius: 6px;
+        transition: background-color 0.2s, transform 0.1s;
+        color: #fff;
+        width: 100%;
+      }
+
+      button:hover {
+        transform: translateY(-1px);
+      }
+
+      button:active {
+        transform: translateY(0);
+      }
+
+      form button {
+        background-color: var(--naver-green);
+      }
+
+      form button:hover {
+        background-color: var(--naver-green-hover);
+      }
+
+      .section {
+        margin-bottom: 30px;
+      }
+
+      #delete-section button {
+        background-color: var(--danger-color);
+      }
+
+      #delete-section button:hover {
+        background-color: var(--danger-hover-color);
+      }
+
+      #logged-in-screen h1 {
+        font-size: 24px;
+        color: var(--text-primary);
+      }
+
+      #username {
+        color: var(--naver-green);
+        font-weight: 700;
+      }
+
+      /* 눈 내리는 효과 스타일 */
+      .snowflake {
+        position: fixed;
+        top: -5%;
+        color: #fff;
+        user-select: none;
+        pointer-events: none;
+        z-index: 0; /* 컨테이너 뒤에 있도록 */
+        animation: snowflakes-fall linear infinite,
+          snowflakes-shake ease-in-out infinite;
+      }
+
+      @keyframes snowflakes-fall {
+        from {
+          top: -5%;
         }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        to {
+          top: 105%;
         }
-        h1 {
-            color: #333;
+      }
+
+      @keyframes snowflakes-shake {
+        0%,
+        100% {
+          transform: translateX(0);
         }
-        form {
-            margin: 20px 0;
+        50% {
+          transform: translateX(30px);
         }
-        input {
-            padding: 10px;
-            margin: 5px 0;
-            width: 80%;
-            font-size: 16px;
-        }
-        button {
-            padding: 10px 20px;
-            margin: 10px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        .section {
-            margin-bottom: 30px;
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container" id="login-screen">
-        <h1>User Management</h1>
-        <div class="section" id="login-section">
-            <h2>Login</h2>
-            <form id="login-form">
-                <input type="email" id="login-email" placeholder="Email" required><br>
-                <input type="password" id="login-password" placeholder="Password" required><br>
-                <button type="button" onclick="loginUser()">Login</button>
-            </form>
-        </div>
-        <div class="section" id="register-section">
-            <h2>Register</h2>
-            <form id="register-form">
-                <input type="email" id="register-email" placeholder="Email" required><br>
-                <input type="password" id="register-password" placeholder="Password" required><br>
-                <input type="text" id="register-username" placeholder="Username" required><br>
-                <button type="button" onclick="registerUser()">Register</button>
-            </form>
-        </div>
+      <h1>User Management</h1>
+      <div class="section" id="login-section">
+        <h2>Login</h2>
+        <form id="login-form">
+          <input type="email" id="login-email" placeholder="Email" required />
+          <input
+            type="password"
+            id="login-password"
+            placeholder="Password"
+            required
+          />
+          <button type="button" onclick="loginUser()">Login</button>
+        </form>
+      </div>
+      <div class="section" id="register-section">
+        <h2>Register</h2>
+        <form id="register-form">
+          <input
+            type="email"
+            id="register-email"
+            placeholder="Email"
+            required
+          />
+          <input
+            type="password"
+            id="register-password"
+            placeholder="Password"
+            required
+          />
+          <input
+            type="text"
+            id="register-username"
+            placeholder="Username"
+            required
+          />
+          <button type="button" onclick="registerUser()">Register</button>
+        </form>
+      </div>
     </div>
 
-    <div class="container" id="logged-in-screen" style="display: none;">
-        <h1>Welcome, <span id="username"></span></h1>
-        <div class="section" id="update-password-section">
-            <h2>Update Password</h2>
-            <form id="update-password-form">
-                <input type="password" id="update-password" placeholder="New Password" required><br>
-                <button type="button" onclick="updatePassword()">Update Password</button>
-            </form>
-        </div>
+    <div class="container" id="logged-in-screen" style="display: none">
+      <h1>Welcome, <span id="username"></span></h1>
+      <div class="section" id="update-password-section">
+        <h2>Update Password</h2>
+        <form id="update-password-form">
+          <input
+            type="password"
+            id="update-password"
+            placeholder="New Password"
+            required
+          />
+          <button type="button" onclick="updatePassword()">
+            Update Password
+          </button>
+        </form>
+      </div>
 
-        <div class="section" id="delete-section">
-            <h2>Delete Account</h2>
-            <button type="button" onclick="deleteUser()">Delete Account</button>
-        </div>
+      <div class="section" id="delete-section">
+        <h2>Delete Account</h2>
+        <button type="button" onclick="deleteUser()">Delete Account</button>
+      </div>
     </div>
 
     <script>
-        let userEmail = null;
+      let userEmail = null;
 
-        function loginUser() {
-            const email = document.getElementById('login-email').value;
-            const password = document.getElementById('login-password').value;
+      // 이메일 형식 검사를 위한 정규식
+      const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
 
-            fetch('/api/user/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ email, password })
-            })
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then(error => { throw new Error(error.detail); });
-                }
-                return response.json();
-            })
-            .then(data => {
-                userEmail = email; // 로그인 성공 시 이메일 저장
-                document.getElementById('username').textContent = `Hello, ${data.username}!`; // 사용자 이름 표시
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('logged-in-screen').style.display = 'block';
-            })
-            .catch(error => alert(`Login failed: ${error.message}`));
+      function loginUser() {
+        const email = document.getElementById("login-email").value;
+        const password = document.getElementById("login-password").value;
+
+        // 이메일 유효성 검사
+        if (!emailRegex.test(email)) {
+          alert("올바른 이메일 주소 형식을 입력해주세요.");
+          return;
         }
 
-        function registerUser() {
-            const email = document.getElementById('register-email').value;
-            const password = document.getElementById('register-password').value;
-            const username = document.getElementById('register-username').value;
-
-            fetch('/api/user/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ email, password, username })
-            })
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then(error => { throw new Error(error.detail); });
-                }
-                return response.json();
-            })
-            .then(() => alert(`Registration successful! Welcome, ${username}.`)) // 성공 메시지에 사용자 이름 표시
-            .catch(error => alert(`Registration failed: ${error.message}`));
-        }
-
-        function updatePassword() {
-            const newPassword = document.getElementById('update-password').value;
-
-            fetch('/api/user/update-password', {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ email: userEmail, new_password: newPassword })
-            })
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then(error => { throw new Error(error.detail); });
-                }
-                return response.json();
-            })
-            .then(() => alert(`Password successfully updated!`)) // 성공 메시지
-            .catch(error => alert(`Password update failed: ${error.message}`));
-        }
-
-        function deleteUser() {
-            if (!userEmail) {
-                alert("No user is logged in.");
-                return;
+        fetch("/api/user/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        })
+          .then((response) => {
+            if (!response.ok) {
+              return response.json().then((error) => {
+                throw new Error(error.detail);
+              });
             }
+            return response.json();
+          })
+          .then((data) => {
+            userEmail = email;
+            document.getElementById("username").textContent = data.username;
+            document.getElementById("login-screen").style.display = "none";
+            document.getElementById("logged-in-screen").style.display = "block";
+          })
+          .catch((error) => alert(`Login failed: ${error.message}`));
+      }
 
-            fetch('/api/user/delete', {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ email: userEmail }) // 저장된 이메일 전송
-            })
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then(error => { throw new Error(error.detail); });
-                }
-                return response.json();
-            })
-            .then(() => {
-                alert(`User deleted successfully!`);
-                document.getElementById('logged-in-screen').style.display = 'none';
-                document.getElementById('login-screen').style.display = 'block';
-                userEmail = null; // 이메일 초기화
-            })
-            .catch(error => alert(`Account deletion failed: ${error.message}`));
+      function registerUser() {
+        const email = document.getElementById("register-email").value;
+        const password = document.getElementById("register-password").value;
+        const username = document.getElementById("register-username").value;
+
+        // 이메일 유효성 검사
+        if (!emailRegex.test(email)) {
+          alert("올바른 이메일 주소 형식을 입력해주세요.");
+          return;
         }
+
+        fetch("/api/user/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password, username }),
+        })
+          .then((response) => {
+            if (!response.ok) {
+              return response.json().then((error) => {
+                throw new Error(error.detail);
+              });
+            }
+            return response.json();
+          })
+          .then(() => alert(`Registration successful! Welcome, ${username}.`))
+          .catch((error) => alert(`Registration failed: ${error.message}`));
+      }
+
+      function updatePassword() {
+        const newPassword = document.getElementById("update-password").value;
+
+        fetch("/api/user/update-password", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: userEmail, new_password: newPassword }),
+        })
+          .then((response) => {
+            if (!response.ok) {
+              return response.json().then((error) => {
+                throw new Error(error.detail);
+              });
+            }
+            return response.json();
+          })
+          .then(() => alert(`Password successfully updated!`))
+          .catch((error) => alert(`Password update failed: ${error.message}`));
+      }
+
+      function deleteUser() {
+        if (!userEmail) {
+          alert("No user is logged in.");
+          return;
+        }
+
+        fetch("/api/user/delete", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: userEmail }),
+        })
+          .then((response) => {
+            if (!response.ok) {
+              return response.json().then((error) => {
+                throw new Error(error.detail);
+              });
+            }
+            return response.json();
+          })
+          .then(() => {
+            alert(`User deleted successfully!`);
+            document.getElementById("logged-in-screen").style.display = "none";
+            document.getElementById("login-screen").style.display = "block";
+            userEmail = null;
+          })
+          .catch((error) => alert(`Account deletion failed: ${error.message}`));
+      }
+
+      // 눈 내리는 효과를 만드는 함수
+      function createSnowflakes() {
+        const snowflakeContainer = document.body;
+        const numberOfSnowflakes = 60;
+        for (let i = 0; i < numberOfSnowflakes; i++) {
+          let snowflake = document.createElement("div");
+          snowflake.innerHTML = "❄️";
+          snowflake.classList.add("snowflake");
+
+          snowflake.style.left = Math.random() * 100 + "vw";
+          snowflake.style.animationDuration =
+            Math.random() * 7 + 8 + "s, " + (Math.random() * 3 + 2) + "s";
+          snowflake.style.animationDelay =
+            Math.random() * 5 + "s, " + Math.random() * 2 + "s";
+          snowflake.style.fontSize = Math.random() * 18 + 10 + "px";
+          snowflake.style.opacity = Math.random() * 0.7 + 0.3;
+
+          snowflakeContainer.appendChild(snowflake);
+        }
+      }
+
+      window.addEventListener("load", createSnowflakes);
     </script>
-</body>
+  </body>
 </html>
