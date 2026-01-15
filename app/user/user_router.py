@@ -22,7 +22,7 @@ def register_user(user: User, service: UserService = Depends(get_user_service)) 
     ## TODO
     try:
         user = service.register_user(user)
-        return BaseResponse(status="success", data=user, message="Register Success.") 
+        return BaseResponse(status="success", data=user, message="User registration success.") 
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -33,7 +33,7 @@ def delete_user(user_delete_request: UserDeleteRequest, service: UserService = D
     ## TODO
     try:
         user = service.delete_user(user_delete_request.email)
-        return BaseResponse(status="success", data=user, message="Delete Success.") 
+        return BaseResponse(status="success", data=user, message="User Deletion Success.") 
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
 
@@ -44,6 +44,6 @@ def update_user_password(user_update: UserUpdate, service: UserService = Depends
     ## TODO
     try:
         user = service.update_user_pwd(user_update)
-        return BaseResponse(status="success", data=user, message="Password Update Success.") 
+        return BaseResponse(status="success", data=user, message="User password update success.") 
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
