@@ -6,8 +6,9 @@ class UserService:
         self.repo = userRepoitory
 
     def login(self, user_login: UserLogin) -> User:
-        ## TODO
-        user = None
+        user = self.repo.get_user_by_email(user_login.email)
+        if not user or user.password != user_login.password:
+            raise ValueError("아이디 또는 비밀번호가 잘못되었습니다.")
         return user
         
     def register_user(self, new_user: User) -> User:
