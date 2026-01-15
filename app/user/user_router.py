@@ -9,6 +9,12 @@ user = APIRouter(prefix="/api/user")
 
 @user.post("/login", response_model=BaseResponse[User], status_code=status.HTTP_200_OK)
 def login_user(user_login: UserLogin, service: UserService = Depends(get_user_service)) -> BaseResponse[User]:
+    """
+    /api/user/login Endpoint
+    1. 유저 로그인
+    2. 성공 시 BaseResponse[User] 반환
+    3. 실패 시 HTTPException 반환 (400 Bad Request)
+    """
     try:
         user = service.login(user_login)
         return BaseResponse(status="success", data=user, message="Login Success.") 
@@ -18,8 +24,12 @@ def login_user(user_login: UserLogin, service: UserService = Depends(get_user_se
 
 @user.post("/register", response_model=BaseResponse[User], status_code=status.HTTP_201_CREATED)
 def register_user(user: User, service: UserService = Depends(get_user_service)) -> BaseResponse[User]:
-
-    ## TODO
+    """
+    /api/user/register Endpoint
+    1. 유저 회원가입
+    2. 성공 시 BaseResponse[User] 반환
+    3. 실패 시 HTTPException 반환 (400 Bad Request)
+    """
     try:
         user = service.register_user(user)
         return BaseResponse(status="success", data=user, message="User registration success.") 
@@ -29,8 +39,12 @@ def register_user(user: User, service: UserService = Depends(get_user_service)) 
 
 @user.delete("/delete", response_model=BaseResponse[User], status_code=status.HTTP_200_OK)
 def delete_user(user_delete_request: UserDeleteRequest, service: UserService = Depends(get_user_service)) -> BaseResponse[User]:
-
-    ## TODO
+    """
+    /api/user/delete Endpoint
+    1. 유저 회원탈퇴
+    2. 성공 시 BaseResponse[User] 반환
+    3. 실패 시 HTTPException 반환 (404 Not Found)
+    """
     try:
         user = service.delete_user(user_delete_request.email)
         return BaseResponse(status="success", data=user, message="User Deletion Success.") 
@@ -40,8 +54,12 @@ def delete_user(user_delete_request: UserDeleteRequest, service: UserService = D
 
 @user.put("/update-password", response_model=BaseResponse[User], status_code=status.HTTP_200_OK)
 def update_user_password(user_update: UserUpdate, service: UserService = Depends(get_user_service)) -> BaseResponse[User]:
-
-    ## TODO
+    """
+    /api/user/update-password Endpoint
+    1. 유저 비밀번호 변경
+    2. 성공 시 BaseResponse[User] 반환
+    3. 실패 시 HTTPException 반환 (404 Not Found)
+    """
     try:
         user = service.update_user_pwd(user_update)
         return BaseResponse(status="success", data=user, message="User password update success.") 
