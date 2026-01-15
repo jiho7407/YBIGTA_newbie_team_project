@@ -6,23 +6,51 @@ class UserService:
         self.repo = userRepoitory
 
     def login(self, user_login: UserLogin) -> User:
+        
+        ## TODO
         user = self.repo.get_user_by_email(user_login.email)
-        if not user or user.password != user_login.password:
-            raise ValueError("아이디 또는 비밀번호가 잘못되었습니다.")
+        if not user:
+            raise ValueError("User not Found.")
+        if user.password != user_login.password:
+            raise ValueError("Invalid ID/PW")
         return user
         
     def register_user(self, new_user: User) -> User:
+
         ## TODO
-        new_user = None
+        if new_user.email is None:
+            raise ValueError("회원가입에 실패했습니다.")
+
+        elif new_user.email == "admin":
+            raise ValueError("회원가입에 실패했습니다.")
+        
+        elif self.repo.get_user_by_email(new_user.email) is None:
+            raise ValueError("회원가입에 실패했습니다.")
+
+        else:
+            new_user = self.repo.save_user(new_user)
+
         return new_user
 
     def delete_user(self, email: str) -> User:
-        ## TODO        
-        deleted_user = None
+
+        ## TODO
+        user = self.repo.get_user_by_email(email)
+        if user is None:
+            raise ValueError("User not Found.")
+        
+        else:
+            deleted_user = self.repo.delete_user(user)
+
         return deleted_user
 
     def update_user_pwd(self, user_update: UserUpdate) -> User:
+
         ## TODO
-        updated_user = None
+        target_user = self.repo.get_user_by_email(user_update.email)
+        if not target_user:
+            raise ValueError("User not Found.")
+
+        target_user.password = user_update.new_password
+        updated_user = self.repo.save_user(target_user)
         return updated_user
-        
