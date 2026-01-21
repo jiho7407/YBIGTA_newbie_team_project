@@ -15,13 +15,12 @@ class IMDbCrawler(BaseCrawler):
         super().__init__(output_dir)
         self.driver = None
         self.reviews_data: List[Dict] = []
+        # 기생충 리뷰 페이지
         self.target_url = "https://www.imdb.com/title/tt6751668/reviews/?sort=submissionDate&dir=desc&ratingFilter=0"
 
-        # [원상복구] 잘 작동하던 '리뷰 내용 박스'를 다시 메인 기준으로 잡습니다.
+        # [선택자 설정]
         self.SELECTOR_REVIEW_BOX = "div.ipc-list-card--border-speech"
-        
-        # [옆집 태그] 날짜가 들어있는 헤더 박스 (현종님이 찾아주신 태그)
-        self.SELECTOR_DATE_HEADER = "div.sc-f5d9bc9e-1"
+        self.SELECTOR_DATE_HEADER = "div.sc-f5d9bc9e-1" # 날짜가 있는 헤더 박스
 
         self.SELECTOR_25_MORE_BTN = "//span[contains(@class, 'ipc-see-more')]//button"
         self.SELECTOR_SPOILER_BTN = "//button[contains(., 'Spoiler')]"
@@ -83,7 +82,6 @@ class IMDbCrawler(BaseCrawler):
 
         # 3. [파싱]
         print("\nParsing reviews...")
-        # 여기서 '리뷰 내용 박스'들을 가져옵니다. (이전과 동일)
         reviews = self.driver.find_elements(By.CSS_SELECTOR, self.SELECTOR_REVIEW_BOX)
         
         # 날짜 정규식 패턴
@@ -91,31 +89,32 @@ class IMDbCrawler(BaseCrawler):
 
         for idx, review in enumerate(reviews[:target_count]):
             try:
-                # [1] 내용 (기존 방식 그대로 - review 변수 안에서 찾음)
+                # [1] 내용
                 try: 
                     content_el = review.find_element(By.CSS_SELECTOR, self.SELECTOR_CONTENT)
                     content = content_el.get_attribute('innerText').strip()
                 except: content = ""
 
-                # [2] 별점 (기존 방식 그대로)
-                try: rating = review.find_element(By.CSS_SELECTOR, self.SELECTOR_RATING).text
-                except: rating = None
+                # [2] 별점 (10점 만점 -> 5점 만점 환산)
+                try: 
+                    raw_rating = review.find_element(By.CSS_SELECTOR, self.SELECTOR_RATING).text
+                    # "10", "8" 같은 문자열을 숫자로 변환 후 2로 나눔
+                    rating = float(raw_rating) / 2
+                except: 
+                    rating = None
 
-                # [3] 날짜 (★ 핵심 변경: 부모를 통해 옆집 찾기)
+                # [3] 날짜 (YYYY.MM.DD 형식 변환)
                 date = ""
                 try:
-                    # XPath 설명: ./.. (내 부모로 올라가서) //div[...] (그 안의 날짜 박스를 찾아라)
-                    # 이렇게 하면 '리뷰 내용 박스' 기준으로 '날짜 박스'를 찾아낼 수 있습니다.
                     date_header_box = review.find_element(By.XPATH, f"./..//div[contains(@class, 'sc-f5d9bc9e-1')]")
-                    
                     header_text = date_header_box.get_attribute('innerText')
                     
-                    # 정규식으로 날짜 추출
                     match = date_pattern.search(header_text)
                     if match:
                         date_str = match.group(0)
                         date_obj = datetime.strptime(date_str, "%b %d, %Y")
-                        date = date_obj.strftime("%Y%m%d")
+                        # [변경점] 포맷을 %Y%m%d -> %Y.%m.%d 로 변경
+                        date = date_obj.strftime("%Y.%m.%d")
                 except Exception:
                     date = ""
 
