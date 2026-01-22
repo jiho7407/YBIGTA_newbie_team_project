@@ -124,7 +124,7 @@ class JihoCrawler(BaseCrawler):
             
     def save_to_database(self):
         keys = self.data[0].keys()
-        filename = self.output_dir + '/jiho_reviews.csv'
+        filename = self.output_dir + '/reviews_rottentomatoes.csv'
         # 폴더가 없을 시
         if not os.path.exists(self.output_dir):
             os.makedirs(self.output_dir)
