@@ -6,11 +6,13 @@ from typing import Dict, Type
 from review_analysis.crawling.base_crawler import BaseCrawler
 from review_analysis.crawling.imdb_crawler import IMDbCrawler
 from review_analysis.crawling.jiho_crawler import JihoCrawler
+from review_analysis.crawling.metacritic_crawler import MetacriticCrawler
 
 # 모든 크롤링 클래스를 예시 형식으로 적어주세요. 
 CRAWLER_CLASSES: Dict[str, Type[BaseCrawler]] = {
     "imdb": IMDbCrawler,
     "jiho": JihoCrawler,
+    "metacritic": MetacriticCrawler,
 }
 
 def create_parser() -> ArgumentParser:
