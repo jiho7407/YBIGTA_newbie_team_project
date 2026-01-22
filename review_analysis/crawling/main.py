@@ -1,3 +1,7 @@
+import sys
+
+sys.path.append('../..') # 루트 디렉토리
+
 from argparse import ArgumentParser
 from typing import Dict, Type
 from review_analysis.crawling.base_crawler import BaseCrawler

@@ -7,16 +7,17 @@ from selenium.webdriver.support import expected_conditions as EC
 
 import time
 import csv
-import re
+import os
 from datetime import datetime, timedelta
 
 from review_analysis.crawling.base_crawler import BaseCrawler
 
 class JihoCrawler(BaseCrawler):
     def __init__(self, output_dir: str):
-        super().__init__(output_dir)
+        self.output_dir = output_dir
         self.base_url = 'https://www.rottentomatoes.com/m/parasite_2019/reviews/all-audience'
         self.driver = None
+        self.goal_count = 500
         
     def start_browser(self):
         """브라우저 시작 메서드 구현"""
@@ -30,6 +31,15 @@ class JihoCrawler(BaseCrawler):
         date_str = date_str.lower().strip()
 
         try:
+            months = {'jan': 1, 'feb': 2, 'mar': 3, 'apr': 4, 'may': 5, 'jun': 6,
+                      'jul': 7, 'aug': 8, 'sep': 9, 'oct': 10, 'nov': 11, 'dec': 12}
+            for mon_abbr, mon_num in months.items():
+                if mon_abbr in date_str:
+                    date_str = f"{mon_num}/{date_str.replace(mon_abbr, '').strip()}/{now.year}"
+                    # 올해가 아닌 경우
+                    if now < datetime.strptime(date_str, "%m/%d/%Y"):
+                        date_str = date_str.replace(str(now.year), str(now.year - 1))
+                    break
             if 'd' in date_str: # 1d ~ 6d 전
                 target_date = now - timedelta(days=int(date_str.replace('d', '')))
             elif 'h' in date_str:
@@ -56,7 +66,7 @@ class JihoCrawler(BaseCrawler):
         privacy_button.click()
         time.sleep(2)
 
-        while len(driver.find_elements("css selector", 'review-card')) < 500:
+        while len(driver.find_elements("css selector", 'review-card')) < self.goal_count:
             try:
                 # 스크롤
                 driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
@@ -114,7 +124,11 @@ class JihoCrawler(BaseCrawler):
             
     def save_to_database(self):
         keys = self.data[0].keys()
-        filename = "reviews_rotten.csv"
+        filename = self.output_dir + '/jiho_reviews.csv'
+        # 폴더가 없을 시
+        if not os.path.exists(self.output_dir):
+            os.makedirs(self.output_dir)
+
         with open(filename, 'w', newline='', encoding='utf-8-sig') as f:
             writer = csv.DictWriter(f, fieldnames=keys)
             writer.writeheader()
@@ -122,7 +136,7 @@ class JihoCrawler(BaseCrawler):
         print(f"{filename}에 {len(self.data)}개의 리뷰 저장 완료.")
 
 if __name__ == "__main__":
-    crawler = JihoCrawler(output_dir='../../database')
+    crawler = JihoCrawler(output_dir='./database')
     # crawler.start_browser()
     crawler.scrape_reviews()
     crawler.save_to_database()
