@@ -1,5 +1,3 @@
-# [프로젝트 팀명/주제]
-
 ### 팀 소개 및 팀원 자기소개
 
 - YBIGTA 2조
@@ -7,15 +5,17 @@
     - Solved.ac Ruby V
     - SWM 16기
     - 알고리즘조아요 개발몰라요
-    - 남궁현종: 연세대학교 산업공학과 22학번
+  - 남궁현종: 연세대학교 산업공학과 22학번
     - Solved.ac Bronze III
-    - YBIGTA 생존 법칙 1. 코딩 연습을 할것 2. 1번 수칙을 준수할 것
-    - 정재훈: 연세대학교 물리학과 22학번
+    - YBIGTA 생존 법칙
+      1. 코딩 연습을 할것
+      2. 1번 수칙을 준수할 것
+  - 정재훈: 연세대학교 물리학과 22학번
       - Solved.ac Bronze III
       - 양자역학 저도 모릅니다.
       - 컴비젼 황금기는 다시 온다.
 
-### 위에서 캡쳐한 이미지 첨부
+---
 
 ### 실행 방법
 
@@ -74,14 +74,16 @@ cd review_analysis/preprocessing  // 폴더로 이동합니다.
 python main.py -o {output_path} --all // output_path에 파일이 저장됩니다.
 ```
 
+---
+
 ## 데이터 분석 보고서
 
 ### 데이터 소개
 
 - **수집 사이트:** [사이트 명 및 URL 링크]
-  Rotten tomatos 'https://www.rottentomatoes.com/m/parasite_2019/reviews/all-audience'
-  IMDb 'https://www.imdb.com/title/tt6751668/reviews/?sort=submissionDate&dir=desc&ratingFilter=0'
-  metacritic 'https://www.metacritic.com/movie/parasite/user-reviews/'
+  - Rotten tomatos 'https://www.rottentomatoes.com/m/parasite_2019/reviews/all-audience'
+  - IMDb 'https://www.imdb.com/title/tt6751668/reviews/?sort=submissionDate&dir=desc&ratingFilter=0'
+  - metacritic 'https://www.metacritic.com/movie/parasite/user-reviews/'
 - **데이터 형식/개수:**
   .csv / 총 1,500건(각 500건)
 - **특이사항:**
@@ -90,9 +92,10 @@ python main.py -o {output_path} --all // output_path에 파일이 저장됩니�
 ### 3.2. EDA (탐색적 데이터 분석)
 
 - **데이터 분포 시각화:**
-  ![alt text](image-2.png)
-  ![alt text](image-3.png)
-  ![alt text](image-4.png)
+  ![imdb](review_analysis/plots/viz_imdb.png)
+  ![metacritic](review_analysis/plots/viz_metacritic.png)
+  ![rottentomatoes](review_analysis/plots/viz_rottentomatoes.png)
+  ![at_all](review_analysis/plots/viz_at_all.png)
 - **해석:**
 - - 사이트별 빈번한 키워드
     - IMDB: family, best, story, poor, good, people, rich
@@ -106,6 +109,8 @@ python main.py -o {output_path} --all // output_path에 파일이 저장됩니�
 
     세 사이트 모두 전반적으로 영화에 대한 긍정적인 반응이 많았던 것을 확인할 수 있음.
     또한 영화 스토리 또는 장르에 관한 내용들도 자주 언급이 되는 것을 확인할 수 있음.
+  - 시계열적으로는, imdb기준으로는 2019년에 많은 리뷰수를, metacritic과 rottentomatoes기준으로는 최근에 비교적 많은 리뷰수를 확인할 수 있었다.
+    - 이는 크롤링의 방법에 따른 차이로 보인다.
 
 ### 3.3. 전처리 및 Feature Engineering
 
@@ -124,12 +129,16 @@ python main.py -o {output_path} --all // output_path에 파일이 저장됩니�
 ### 3.4. 비교 분석 결과
 
 - **사이트별 키워드 비교 (WordCloud):**
-  ![alt text](image.png)
+  ![text_keyword_comparison](review_analysis/plots/text_keyword_count.png)
+- **파생변수 값 시계열 분석**
+  ![text_tend](review_analysis/plots/text_trend.png)
 - **결론:**
   - 각 사이트의 점수를 0~5점으로 정규화한 데이터를 분석하였을 때 전반적으로 5점으로 갈수록 상승하는 우상향 형태를 띄고 있음.
 
   - 리뷰 길이의 경우, RottenTomatoes > Metacritic > IMDb 순으로 길이가 길어지는 모습을 확인할 수 있음.
     전반적으로 500자 이내의 짧은 리뷰들이 대부분이지만, IMDb의 경우 2000자 이상의 긴 리뷰들도 다소 존재함.
+
+  - 시계열 분석 결과, IMDb에서는 약간의 감소 추세를, Metacritic에서는 최근의 증가 추세를 볼 수 있었다.
 
 ---
 
@@ -140,19 +149,16 @@ _(이번 과제 요구사항: Branch Protection, Push Reject, PR & Merge 인증 
 ### 4.1. Branch Protection Rule 설정
 
 - **설명:** main 브랜치에 직접 push를 막고, PR을 통해서만 merge 되도록 설정함.
-  ![Branch Protection Rule](./branch_protection.png)
-  [cite_start]_(파일명: branch_protection.png)_
+  ![Branch Protection Rule](github/branch_protection.png)
 
 ### 4.2. Main 브랜치 Push 거부 (Reject)
 
 - **설명:** 로컬에서 main 브랜치로 직접 push 시도 시 차단되는 화면임.
-  ![Push Rejected](./push_rejected.png)
-  [cite_start]_(파일명: push_rejected.png)_
+  ![Push Rejected](github/push_rejected.png)
 
 ### 4.3. Pull Request 및 Merge 과정
 
 - **설명:** PR 생성 → 팀원 리뷰(Review) → Merge가 완료된 화면임.
-  ![Review and Merged](./review_and_merged.png)
-  [cite_start]_(파일명: review_and_merged.png)_
+  ![Review and Merged](github/review_and_merged.png)
 
 ---
