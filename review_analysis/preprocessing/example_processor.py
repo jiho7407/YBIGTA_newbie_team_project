@@ -1,4 +1,5 @@
 from review_analysis.preprocessing.base_processor import BaseDataProcessor
+from review_analysis.preprocessing import wiseyy as common_utils
 
 import pandas as pd
 import numpy as np
@@ -10,26 +11,37 @@ class ExampleProcessor(BaseDataProcessor):
 
 
     def preprocess(self):
-        print(f"Preprocessing data from {self.input_path}...")
+        """
+        데이터 로드 및 전처리 (결측치/이상치 처리)
+        """
+        print(f"Processing {self.input_path}...")
+        
+        # 1. 데이터 로드
+        self.df = pd.read_csv(self.input_path)
+        
+        # 2. 날짜 형식 변환 (문자열 -> datetime)
+        self.df['date'] = pd.to_datetime(self.df['date'], format='%Y.%m.%d', errors='coerce')
 
-        df = pd.read_csv(self.input_path)
+        # [EDA 실행] (필요시 주석 해제하여 확인)
+        # common_utils.check_outliers_eda(self.df)
+        # common_utils.plot_distributions(self.df) 
 
-        # 결측치처리
-        # Todo
-
-        # 이상치 처리
-        # Todo
+        # 3. 공통 모듈을 사용해 전처리 수행
+        # (1) 결측치 처리
+        self.df = common_utils.process_missing_values(self.df)
+        
+        # (2) 이상치 처리 (클리핑, 삭제, 자르기)
+        self.df = common_utils.process_outliers(self.df)
 
         # 텍스트데이터 전처리
-        df['content'] = df['content'].str.lower()  # 소문자 변환
-        df = df[df['content'].str.len() > 10]  # 10자 이하 리뷰 제거
-        df = df[df['content'].str.len() < 2000]  # 2000자 이상 리뷰 제거
-        df['content'] = df['content'].str.replace(r'[^\w\s]', '', regex=True) # 특수문자 제거
-
+        self.df['content'] = self.df['content'].str.lower()  # 소문자 변환
+        self.df = self.df[self.df['content'].str.len() > 10]  # 10자 이하 리뷰 제거
+        self.df = self.df[self.df['content'].str.len() < 2000]  # 2000자 이상 리뷰 제거
+        self.df['content'] = self.df['content'].str.replace(r'[^\w\s]', '', regex=True) # 특수문자 제거
         for punct in ['.', ',', '!', '?', ';', ':']: # 문장 부호 앞에 공백 추가
-            df['content'] = df['content'].str.replace(punct, f' {punct}', regex=False)
+            self.df['content'] = self.df['content'].str.replace(punct, f' {punct}', regex=False)
         
-        self.processed_data = df
+        self.processed_data = self.df
     
     def feature_engineering(self):
         print("Performing feature engineering...")
