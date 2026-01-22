@@ -23,8 +23,8 @@ class CommonProcessor(BaseDataProcessor):
         self.df['date'] = pd.to_datetime(self.df['date'], format='%Y.%m.%d', errors='coerce')
 
         # [EDA 실행] (필요시 주석 해제하여 확인)
-        # common_utils.check_outliers_eda(self.df)
-        # common_utils.plot_distributions(self.df) 
+        common_utils.check_outliers_eda(self.df)
+        common_utils.plot_distributions(self.df) 
 
         # 3. 공통 모듈을 사용해 전처리 수행
         # (1) 결측치 처리

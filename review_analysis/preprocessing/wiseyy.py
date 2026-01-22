@@ -121,7 +121,7 @@ def process_outliers(df):
         if len(text) <= 2000:
             return text
         
-        # 3000자까지 자름
+        # 2000자까지 자름
         truncated = text[:2000]
         
         # 마지막 문장 부호(., !, ?) 위치 찾기

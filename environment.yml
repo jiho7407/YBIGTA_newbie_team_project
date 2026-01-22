@@ -32,4 +32,8 @@ dependencies:
   - pandas-stubs
   - beautifulsoup4
   - types-requests
+  - scikit-learn
+  - matplotlib
+  - seaborn
+  - ipykernel
 prefix: /opt/homebrew/anaconda3/envs/ybigta
