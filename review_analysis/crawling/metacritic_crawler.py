@@ -119,7 +119,7 @@ class MetacriticCrawler(BaseCrawler):
             os.makedirs(self.output_dir)
 
         keys = self.data[0].keys()
-        filename = os.path.join(self.output_dir, 'metacritic_reviews.csv')
+        filename = os.path.join(self.output_dir, 'reviews_metacritic.csv')
         
         with open(filename, 'w', newline='', encoding='utf-8-sig') as f:
             writer = csv.DictWriter(f, fieldnames=keys)
