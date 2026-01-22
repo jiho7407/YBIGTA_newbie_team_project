@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 import os
 
-class ExampleProcessor(BaseDataProcessor):
+class CommonProcessor(BaseDataProcessor):
     def __init__(self, input_path: str, output_path: str):
         super().__init__(input_path, output_path)
 
@@ -42,14 +42,19 @@ class ExampleProcessor(BaseDataProcessor):
             self.df['content'] = self.df['content'].str.replace(punct, f' {punct}', regex=False)
         
         self.processed_data = self.df
-    
+
     def feature_engineering(self):
-        print("Performing feature engineering...")
-        
         df = self.processed_data
 
-        # 다른 특징추출
-        # Todo
+        # 파생변수 생성
+        # raing - 2.5 제곱 * 텍스트 길이
+        text_length = df['content'].astype(str).str.len()
+        rating_deviation_sq = (df['rating'] - 2.5) ** 2
+        
+        # 두 값을 곱하여 새로운 컬럼 생성
+        new_col_name = 'Extreme_score' # 새로 저장될 컬럼명
+        df[new_col_name] = rating_deviation_sq * text_length
+
 
         # 텍스트 벡터화
         word_to_id = {}
