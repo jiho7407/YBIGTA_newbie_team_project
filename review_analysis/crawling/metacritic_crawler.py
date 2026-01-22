@@ -16,7 +16,7 @@ class MetacriticCrawler(BaseCrawler):
         self.base_url = "https://www.metacritic.com/movie/parasite/user-reviews/"
         self.driver = None
         self.target_count = 500
-        self.data = []
+        self.data: list = []
     
     def start_browser(self):
         pass
