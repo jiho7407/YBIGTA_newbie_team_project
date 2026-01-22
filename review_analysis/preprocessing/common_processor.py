@@ -23,8 +23,8 @@ class CommonProcessor(BaseDataProcessor):
         self.df['date'] = pd.to_datetime(self.df['date'], format='%Y.%m.%d', errors='coerce')
 
         # [EDA 실행] (필요시 주석 해제하여 확인)
-        common_utils.check_outliers_eda(self.df)
-        common_utils.plot_distributions(self.df) 
+        # common_utils.check_outliers_eda(self.df)
+        # common_utils.plot_distributions(self.df) 
 
         # 3. 공통 모듈을 사용해 전처리 수행
         # (1) 결측치 처리
@@ -96,7 +96,7 @@ class CommonProcessor(BaseDataProcessor):
                 pmi = np.log2((co_matrix[i][j] * N) / (S[i] * S[j]) + eps)
                 W[i][j] = max(0, pmi)
         
-        from sklearn.utils.extmath import randomized_svd
+        from sklearn.utils.extmath import randomized_svd # type: ignore
         U, S, V = randomized_svd(W, n_components=100, n_iter=5, random_state=42)
         word_vectors = U[:, :100]
 
