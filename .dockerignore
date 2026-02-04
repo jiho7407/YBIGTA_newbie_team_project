@@ -1,0 +1,29 @@
+# Git
+.git
+.gitignore
+
+# Environment
+.env
+environment.yml
+YBIGTA_newbie_team_project/
+
+# Python caches
+__pycache__/
+*.pyc
+.mypy_cache/
+
+# Local data & assets
+database/*.csv
+database/*.json
+github/
+review_analysis/compare_and_visualize/
+review_analysis/crawling/result/
+review_analysis/plots/
+review_analysis/preprocessing/result/
+
+# Test files
+test/
+
+# IDE/Editor specific
+.vscode/
+.idea/
