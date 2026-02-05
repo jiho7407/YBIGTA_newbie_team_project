@@ -27,3 +27,20 @@ test/
 # IDE/Editor specific
 .vscode/
 .idea/
+
+# venv
+venv/
+.venv/
+env/
+
+# 대용량 모델 및 바이너리
+*.pt
+*.pth
+*.bin
+*.model
+*.zip
+*.tar.gz
+
+# OS 및 캐시
+.DS_Store
+.cache/

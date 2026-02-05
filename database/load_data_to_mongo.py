@@ -40,6 +40,8 @@ def load_csv_to_mongodb():
 
         try:
             df = pd.read_csv(csv_file)
+            # 위에 10줄만 남기기
+            df = df.head(10)
             # MongoDB에 적합한 형태로 데이터 변환 (e.g., NaN -> None)
             df = df.where(pd.notnull(df), None)
             records = df.to_dict('records')
