@@ -125,7 +125,7 @@ python main.py -o {output_path} --all // output_path에 파일이 저장됩니�
 
 - **파생변수**
   파생변수'Extreme_score' 식 : (평점 중간값 기준으로 분산) \* (리뷰 길이) \
-   선정 이유 : 좋거나 나쁘다고 판단한 관객의 리뷰에서 좋은 이유, 나쁜 근거를 더 명백하게 추출 할 수 있고, 텍스트 데이터의 길이가 길수록 근거가 풍부하거나 자세한 이유를 담았을 가능성이 높다고 판단아혀 추후 분석할 때 주목할만한 데이터로서의 점수를 데이터를 만들고자 함.
+  선정 이유 : 좋거나 나쁘다고 판단한 관객의 리뷰에서 좋은 이유, 나쁜 근거를 더 명백하게 추출 할 수 있고, 텍스트 데이터의 길이가 길수록 근거가 풍부하거나 자세한 이유를 담았을 가능성이 높다고 판단아혀 추후 분석할 때 주목할만한 데이터로서의 점수를 데이터를 만들고자 함.
 - **벡터화**
   단어들을 이용하여 동시발생 행렬을 만들고, 이를 PPMI 매트릭스로 만든 후 SVD를 이용하여 100개의 차원으로 압축하였음.
 
@@ -165,3 +165,33 @@ _(이번 과제 요구사항: Branch Protection, Push Reject, PR & Merge 인증 
   ![Review and Merged](github/review_and_merged.png)
 
 ---
+
+## 5. 과제 수행 내역
+
+### 5.1. DB, Docker, AWS, CI/CD
+
+- **DB & API**: MySQL(RDS)와 MongoDB(Atlas)를 사용하여 DB 환경을 구축했습니다. 사용자 정보(User)는 MySQL, 리뷰 데이터(Review)는 MongoDB를 통해 관리하도록 `user_repository.py`와 `dependencies.py`를 수정하고, `review` 관련 API를 신규 구현했습니다.
+- **Docker**: `Dockerfile`과 `.dockerignore`를 작성하여 프로젝트를 컨테이너화하고, 생성된 이미지를 Docker Hub에 업로드했습니다.
+  - **Docker Hub**: [https://hub.docker.com/r/zyyo/ybigta-project](https://hub.docker.com/r/zyyo/ybigta-project)
+- **AWS & CI/CD**: Docker 이미지를 AWS EC2 인스턴스에 배포하고, GitHub Actions를 통해 main 브랜치에 코드가 푸시될 때마다 자동으로 Docker 이미지를 빌드 및 푸시한 후 EC2에 배포하는 CI/CD 파이프라인을 구축했습니다.
+
+### 5.2. API 실행 결과
+
+![aws1](aws/aws1.png)
+![aws2](aws/aws2.png)
+![aws3](aws/aws3.png)
+![aws4](aws/aws4.png)
+![aws5](aws/aws5.png)
+![aws6](aws/aws6.png)
+
+### 5.3. 발생했던 어려움
+
+- Docker Hub 저장소 이름에는 대문자를 사용할 수 없었습니다.
+- EC2 인스턴스의 RAM 부족으로 스왑 메모리를 설정해야 했습니다.
+- 로컬 환경과 배포 환경 간의 포트 충돌(8080/8000) 이슈가 있었습니다.
+- AWS 보안 그룹의 인바운드와 아웃바운드 규칙의 차이를 이해하는 데 시간이 걸렸습니다.
+- GitHub Secrets는 생성 후 다시 확인할 수 없어 처음엔 당황했습니다.
+
+```
+
+```
