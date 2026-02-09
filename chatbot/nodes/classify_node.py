@@ -4,29 +4,40 @@
 """
 
 from langchain_upstage import ChatUpstage
-from langchain_core.messages import SystemMessage
+from langchain_core.messages import SystemMessage, HumanMessage
 from utils.state import ChatState
 
-llm = ChatUpstage(model="solar-mini", temperature=0)
+_llm = None
 
-CLASSIFY_PROMPT = """당신은 영화 "기생충(Parasite, 2019)" 리뷰 분석 챗봇의 의도 분류기입니다.
-사용자 메시지를 읽고 아래 4가지 중 하나로 분류하세요.
+def _get_llm():
+    global _llm
+    if _llm is None:
+        _llm = ChatUpstage(model="solar-mini", temperature=0)
+    return _llm
 
-- review_analysis: 기생충 리뷰 내용, 관객 반응, 평점, 키워드 등에 대한 질문
-- subject_info: 기생충 영화 자체의 정보 (감독, 배우, 줄거리, 수상 내역 등)
-- general: 일반적인 인사, 챗봇 사용법 질문
-- out_of_scope: 기생충과 관련 없는 질문
+CLASSIFY_PROMPT = """You are an intent classifier for a movie review chatbot about "Parasite (기생충, 2019)".
+Classify the user's LAST message into exactly one of these categories:
 
-반드시 위 4개 중 하나만 답하세요. 다른 말은 하지 마세요."""
+- review_analysis : Questions about audience reviews, ratings, sentiments, keywords, review trends, comparisons across review sites (IMDb, Metacritic, RottenTomatoes)
+- subject_info : Questions about the movie itself — director, cast, plot, awards, genre, runtime, box office
+- general : Greetings, thank-you, chatbot usage questions, or follow-up acknowledgements like "ok", "thanks", "got it"
+- out_of_scope : Anything unrelated to the movie Parasite
+
+Rules:
+1. Output ONLY one of the four labels above, nothing else.
+2. If the message is ambiguous but mentions reviews/ratings/audience, choose review_analysis.
+3. If the message is ambiguous but mentions the movie's content/people, choose subject_info.
+4. Short affirmations ("네", "ㅇㅇ", "ok", "good") → general.
+5. Messages in any language should be classified the same way."""
 
 
 def classify_node(state: ChatState) -> dict:
     last_message = state["messages"][-1]
-    response = llm.invoke([
+    response = _get_llm().invoke([
         SystemMessage(content=CLASSIFY_PROMPT),
-        last_message,
+        HumanMessage(content=last_message.content),
     ])
-    intent = response.content.strip().lower()
+    intent = response.content.strip().lower().replace(" ", "_")
 
     valid_intents = {"review_analysis", "subject_info", "general", "out_of_scope"}
     if intent not in valid_intents:
