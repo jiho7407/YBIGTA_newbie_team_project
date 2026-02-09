@@ -5,6 +5,7 @@ Streamlit UI → LangGraph 실행 진입점
 """
 
 import os
+import sys
 import streamlit as st
 from collections import defaultdict
 from langchain_core.messages import HumanMessage, AIMessage
@@ -13,6 +14,11 @@ from streamlit.errors import StreamlitSecretNotFoundError
 
 # .env 파일에서 환경 변수를 로드합니다 (로컬 개발용).
 load_dotenv()
+
+# Streamlit Cloud에서 패키지 경로가 누락되는 경우를 대비해 프로젝트 루트를 추가합니다.
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
 
 st.set_page_config(page_title="기생충 리뷰 챗봇", page_icon="🎬", layout="centered")
 st.title("🎬 기생충(Parasite) 리뷰 분석 챗봇")
