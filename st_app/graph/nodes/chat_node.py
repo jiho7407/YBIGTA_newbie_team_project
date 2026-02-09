@@ -5,23 +5,32 @@
 
 from langchain_upstage import ChatUpstage
 from langchain_core.messages import SystemMessage
-from utils.state import ChatState
+from st_app.utils.state import ChatState
 
-llm = ChatUpstage(model="solar-mini", temperature=0.7)
+_llm = None
+
+
+def _get_llm():
+    global _llm
+    if _llm is None:
+        _llm = ChatUpstage(model="solar-mini", temperature=0.7)
+    return _llm
+
 
 SYSTEM_PROMPT = """당신은 영화 "기생충(Parasite, 2019)"에 대한 리뷰 분석 도우미입니다.
-사용자의 질문에 친절하고 정확하게 답변하세요.
+한국어로 친절하게 답변하세요.
 
-아래는 참고할 수 있는 컨텍스트입니다:
+## 규칙
+- 아래 [리뷰 데이터]나 [영화 정보]가 제공되면 반드시 해당 데이터를 근거로 답변하세요.
+- 리뷰 데이터가 "(없음)"인데 리뷰 관련 질문이면: "현재 검색된 리뷰 데이터가 없습니다. 다시 질문해 주세요."
+- 기생충과 무관한 질문이면: 정중히 범위를 안내하세요.
+- 이전 대화 맥락을 고려하여 자연스럽게 이어서 답변하세요.
 
 [리뷰 데이터]
 {review_context}
 
 [영화 정보]
-{subject_context}
-
-컨텍스트가 비어있으면 일반적인 지식으로 답변하되,
-리뷰 데이터에 대한 질문이라면 "현재 검색된 리뷰 데이터가 없습니다"라고 안내하세요."""
+{subject_context}"""
 
 
 def chat_node(state: ChatState) -> dict:
@@ -34,6 +43,6 @@ def chat_node(state: ChatState) -> dict:
     )
 
     messages = [SystemMessage(content=system)] + list(state["messages"])
-    response = llm.invoke(messages)
+    response = _get_llm().invoke(messages)
 
     return {"messages": [response]}

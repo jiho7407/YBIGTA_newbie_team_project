@@ -207,6 +207,9 @@ marimo/_lsp/
 __marimo__/
 
 
+# Streamlit secrets
+.streamlit/secrets.toml
+
 # cache files
 .DS_Store
 __pycache__/
