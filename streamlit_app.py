@@ -1,7 +1,7 @@
 """
-Streamlit 채팅 UI (지호 담당)
+Streamlit UI → LangGraph 실행 진입점
 
-실행: streamlit run chatbot/streamlit_app.py
+실행: streamlit run streamlit_app.py
 """
 
 import os
@@ -19,8 +19,7 @@ if not os.getenv("UPSTAGE_API_KEY"):
     st.error("UPSTAGE_API_KEY가 설정되지 않았습니다. .env 파일 또는 Streamlit Secrets를 확인하세요.")
     st.stop()
 
-# graph import를 API 키 체크 이후에 수행 (모듈 로드 시 LLM 초기화됨)
-from chatbot.graph import chatbot_graph  # noqa: E402
+from st_app.graph.router import chatbot_graph  # noqa: E402
 
 # --- 사이드바 ---
 with st.sidebar:
@@ -41,8 +40,8 @@ with st.sidebar:
 
 # --- 대화 이력 초기화 ---
 if "messages" not in st.session_state:
-    st.session_state.messages = []          # UI 표시용 [{role, content}]
-    st.session_state.langchain_messages = [] # LangGraph 전달용 [BaseMessage]
+    st.session_state.messages = []
+    st.session_state.langchain_messages = []
 
 # --- 기존 메시지 렌더링 ---
 for msg in st.session_state.messages:
@@ -54,14 +53,12 @@ for msg in st.session_state.messages:
 
 # --- 사용자 입력 처리 ---
 if prompt := st.chat_input("기생충 리뷰에 대해 질문해보세요"):
-    # 사용자 메시지 추가
     st.session_state.messages.append({"role": "user", "content": prompt})
     st.session_state.langchain_messages.append(HumanMessage(content=prompt))
 
     with st.chat_message("user"):
         st.markdown(prompt)
 
-    # LangGraph 호출 (멀티턴: 전체 대화 이력 전달)
     with st.chat_message("assistant"):
         with st.spinner("분석 중..."):
             try:
@@ -87,7 +84,6 @@ if prompt := st.chat_input("기생충 리뷰에 대해 질문해보세요"):
                 review_ctx = ""
                 st.error(response)
 
-    # 응답 저장
     st.session_state.langchain_messages.append(AIMessage(content=response))
     st.session_state.messages.append({
         "role": "assistant",

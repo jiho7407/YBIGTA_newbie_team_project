@@ -5,15 +5,17 @@
 
 from langchain_upstage import ChatUpstage
 from langchain_core.messages import SystemMessage
-from utils.state import ChatState
+from st_app.utils.state import ChatState
 
 _llm = None
+
 
 def _get_llm():
     global _llm
     if _llm is None:
         _llm = ChatUpstage(model="solar-mini", temperature=0.7)
     return _llm
+
 
 SYSTEM_PROMPT = """당신은 영화 "기생충(Parasite, 2019)"에 대한 리뷰 분석 도우미입니다.
 한국어로 친절하게 답변하세요.

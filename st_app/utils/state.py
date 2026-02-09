@@ -2,10 +2,10 @@
 공유 State 정의 - 모든 LangGraph 노드가 이 State를 사용합니다.
 
 팀원 모두 이 파일을 import해서 사용하세요:
-    from utils.state import ChatState
+    from st_app.utils.state import ChatState
 """
 
-from typing import TypedDict, Annotated, List, Optional
+from typing import TypedDict, Annotated, List
 from langchain_core.messages import BaseMessage
 from langgraph.graph.message import add_messages
 
