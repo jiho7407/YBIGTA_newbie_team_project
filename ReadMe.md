@@ -202,13 +202,14 @@ _(이번 과제 요구사항: Branch Protection, Push Reject, PR & Merge 인증 
 https://jiho7407-ybigta-newbie-team-project-streamlit-app-wbg8sk.streamlit.app/
 ```
 
-### 6.2. 실행 화면
+### 6.2. 작동 화면
+![챗봇 실행 화면 1](final_assignment/1.png)
+![챗봇 실행 화면 2](final_assignment/2.png)
+![챗봇 실행 화면 3](final_assignment/3.png)
 
-- **Screenshot:**
-  ![챗봇 실행 화면 1](final_assignment/1.png)
-  ![챗봇 실행 화면 2](final_assignment/2.png)
-  ![챗봇 실행 화면 3](final_assignment/3.png)
+### 6.3. 수정한 명세 CSV
+`database/total_reviews.csv`
 
-### 6.3. 실행 방법 및 API 키 설정
+### 6.4. 실행 방법 및 API 키 설정
 
 - 위 데모 링크에 접속하여 챗봇과 상호작용할 수 있습니다.

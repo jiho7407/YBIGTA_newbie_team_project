@@ -1,0 +1,14 @@
+{
+  "created_at_utc": "2026-02-09T03:59:57.924550+00:00",
+  "document_count": 30,
+  "source_counts": {
+    "imdb": 10,
+    "metacritic": 10,
+    "rottentomatoes": 10
+  },
+  "index_files": [
+    "index.faiss",
+    "index.pkl"
+  ],
+  "notes": "Primary metadata stored in index.pkl (LangChain FAISS default)."
+}
