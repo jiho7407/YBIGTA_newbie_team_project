@@ -3,11 +3,11 @@
 사용자 메시지를 분석하여 intent를 결정합니다.
 """
 
-from langchain_openai import ChatOpenAI
+from langchain_upstage import ChatUpstage
 from langchain_core.messages import SystemMessage
 from utils.state import ChatState
 
-llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
+llm = ChatUpstage(model="solar-mini", temperature=0)
 
 CLASSIFY_PROMPT = """당신은 영화 "기생충(Parasite, 2019)" 리뷰 분석 챗봇의 의도 분류기입니다.
 사용자 메시지를 읽고 아래 4가지 중 하나로 분류하세요.

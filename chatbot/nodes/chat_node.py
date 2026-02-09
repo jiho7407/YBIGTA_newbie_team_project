@@ -3,11 +3,11 @@
 분류된 intent와 context를 바탕으로 최종 응답을 생성합니다.
 """
 
-from langchain_openai import ChatOpenAI
+from langchain_upstage import ChatUpstage
 from langchain_core.messages import SystemMessage
 from utils.state import ChatState
 
-llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.7)
+llm = ChatUpstage(model="solar-mini", temperature=0.7)
 
 SYSTEM_PROMPT = """당신은 영화 "기생충(Parasite, 2019)"에 대한 리뷰 분석 도우미입니다.
 사용자의 질문에 친절하고 정확하게 답변하세요.

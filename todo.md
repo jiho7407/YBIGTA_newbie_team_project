@@ -49,7 +49,7 @@ utils/
 - [ ] `.streamlit/secrets.toml` 구성 (로컬 테스트용)
 - [ ] `requirements.txt` 업데이트 (langgraph, langchain 등)
 - [ ] Streamlit Cloud 배포
-- [ ] Streamlit Cloud Secrets 설정 (OPENAI_API_KEY, MONGODB_URI)
+- [ ] Streamlit Cloud Secrets 설정 (UPSTAGE_API_KEY, MONGODB_URI)
 - [ ] 배포 URL 확인 및 팀 공유
 
 ---
@@ -97,6 +97,6 @@ utils/
 
 ## 공통
 
-- [ ] `.env`에 `OPENAI_API_KEY` 추가
+- [ ] `.env`에 `UPSTAGE_API_KEY` 추가
 - [ ] 각자 브랜치에서 작업 후 PR → main 머지
 - [ ] 통합 테스트 (전체 그래프 동작 확인)
