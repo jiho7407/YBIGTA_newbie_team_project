@@ -124,7 +124,7 @@ python main.py -o {output_path} --all // output_path에 파일이 저장됩니�
    단어를 벡터화 하기 위하여 동일 단어에 다른 벡터를 부여할 수 있는 이모지를 포함한 특수문자를 제거하고, 문장 부호 앞 공백을 의도적으로 추가함.
 
 - **파생변수**
-  파생변수'Extreme_score' 식 : (평점 중간값 기준으로 분산) * (리뷰 길이) 
+  파생변수'Extreme_score' 식 : (평점 중간값 기준으로 분산) \* (리뷰 길이)
   선정 이유 : 좋거나 나쁘다고 판단한 관객의 리뷰에서 좋은 이유, 나쁜 근거를 더 명백하게 추출 할 수 있고, 텍스트 데이터의 길이가 길수록 근거가 풍부하거나 자세한 이유를 담았다고 판단아혀 추후 분석할 때 주목할만한 데이터로서의 점수를 데이터를 만들고자 함.
 - **벡터화**
   단어들을 이용하여 동시발생 행렬을 만들고, 이를 PPMI 매트릭스로 만든 후 SVD를 이용하여 100개의 차원으로 압축하였음.
@@ -198,21 +198,17 @@ _(이번 과제 요구사항: Branch Protection, Push Reject, PR & Merge 인증 
 
 ### 6.1. 데모 링크
 
-- **URL:** [여기에 Streamlit Cloud 배포 URL을 추가하세요]
+```
+https://jiho7407-ybigta-newbie-team-project-streamlit-app-wbg8sk.streamlit.app/
+```
 
 ### 6.2. 실행 화면
 
-- **Screenshot:** 
-  ![챗봇 실행 화면](path/to/your/screenshot.png)
-  (여기에 챗봇 실행 화면 스크린샷을 추가하고 이미지 경로를 맞춰주세요)
+- **Screenshot:**
+  ![챗봇 실행 화면 1](final_assignment/1.png)
+  ![챗봇 실행 화면 2](final_assignment/2.png)
+  ![챗봇 실행 화면 3](final_assignment/3.png)
 
 ### 6.3. 실행 방법 및 API 키 설정
 
 - 위 데모 링크에 접속하여 챗봇과 상호작용할 수 있습니다.
-- **중요:** 원활한 작동을 위해서는 Upstage API 키가 필요합니다. Streamlit Cloud 배포 시, 아래와 같이 Secrets에 API 키를 등록해야 합니다.
-  - `Settings` > `Secrets`
-  - 아래 내용을 복사하여 붙여넣기:
-    ```toml
-    UPSTAGE_API_KEY="sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-    ```
-
