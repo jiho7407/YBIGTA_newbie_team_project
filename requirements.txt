@@ -30,6 +30,7 @@ langgraph==0.0.48
 langchain-upstage==0.1.3
 faiss-cpu
 streamlit
+altair<5
 
 # other
 matplotlib
