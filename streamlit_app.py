@@ -6,6 +6,7 @@ Streamlit UI → LangGraph 실행 진입점
 
 import os
 import streamlit as st
+from collections import defaultdict
 from langchain_core.messages import HumanMessage, AIMessage
 from dotenv import load_dotenv
 from streamlit.errors import StreamlitSecretNotFoundError
@@ -34,6 +35,24 @@ if not api_key_found:
 if not api_key_found:
     st.error("UPSTAGE_API_KEY가 설정되지 않았습니다. 로컬에서는 .env 파일에, Streamlit Cloud에서는 Secrets에 API 키를 등록해주세요.")
     st.stop()
+
+# --- LangGraph 로컬 환경 패치 ---
+# 일부 LangGraph 버전에서 empty_checkpoint의 versions_seen이 dict로 초기화되어
+# '__start__' KeyError가 발생합니다. defaultdict로 보정합니다.
+import langgraph.pregel as _pregel  # noqa: E402
+import langgraph.checkpoint.base as _checkpoint_base  # noqa: E402
+
+_orig_empty_checkpoint = _checkpoint_base.empty_checkpoint
+
+
+def _patched_empty_checkpoint():
+    cp = _orig_empty_checkpoint()
+    cp["versions_seen"] = defaultdict(dict, cp.get("versions_seen", {}))
+    return cp
+
+
+_checkpoint_base.empty_checkpoint = _patched_empty_checkpoint
+_pregel.empty_checkpoint = _patched_empty_checkpoint
 
 # API 키가 확인된 후에 LangGraph 관련 모듈을 import 합니다.
 # 이는 API 키가 없을 때 불필요한 초기화를 방지합니다.
@@ -99,6 +118,8 @@ if prompt := st.chat_input("기생충 리뷰에 대해 질문해보세요"):
                         st.text(review_ctx)
 
             except Exception as e:
+                import traceback
+                traceback.print_exc()
                 response = f"오류가 발생했습니다: {e}"
                 review_ctx = ""
                 st.error(response)
