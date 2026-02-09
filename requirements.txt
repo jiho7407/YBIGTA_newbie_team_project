@@ -22,6 +22,13 @@ httpx
 python-dateutil
 pytz
 
+# LangGraph / LLM
+langgraph
+langchain
+langchain-core
+langchain-upstage
+streamlit
+
 # other
 matplotlib
 seaborn
