@@ -28,6 +28,12 @@ def create_vector_db():
     print(f"Reading {CSV_PATH}...")
     df = pd.read_csv(CSV_PATH)
 
+    # 속도 개선: 사이트별 상위 10개만 사용 (source_site 컬럼 기준)
+    if "source_site" in df.columns:
+        df = df.sort_index().groupby("source_site", as_index=False).head(10)
+    else:
+        df = df.head(10)
+
     documents = []
     for _, row in df.iterrows():
         text = str(row["content"])
