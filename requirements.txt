@@ -25,7 +25,6 @@ pytz
 # LangGraph / LLM
 langgraph
 langchain
-langchain-core
 langchain-community
 langchain-upstage
 faiss-cpu
