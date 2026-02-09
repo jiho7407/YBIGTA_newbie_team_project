@@ -7,15 +7,24 @@ Streamlit UI → LangGraph 실행 진입점
 import os
 import streamlit as st
 from langchain_core.messages import HumanMessage, AIMessage
+from dotenv import load_dotenv
+
+# .env 파일에서 환경 변수를 로드합니다 (로컬 개발용).
+load_dotenv()
 
 st.set_page_config(page_title="기생충 리뷰 챗봇", page_icon="🎬", layout="centered")
 st.title("🎬 기생충(Parasite) 리뷰 분석 챗봇")
 
-# --- API 키 체크 (Streamlit Cloud 환경) ---
-# Streamlit Cloud의 Secrets에 'UPSTAGE_API_KEY'가 설정되어 있는지 확인합니다.
-# 이 키는 자동으로 환경 변수로 주입됩니다.
-if "UPSTAGE_API_KEY" not in st.secrets:
-    st.error("UPSTAGE_API_KEY가 설정되지 않았습니다. Streamlit Cloud의 'Secrets'에 API 키를 등록해주세요.")
+# --- API 키 체크 (Streamlit Cloud & Local) ---
+# Streamlit Cloud에서는 st.secrets을, 로컬에서는 .env 파일을 통해 API 키를 확인합니다.
+api_key_found = False
+if hasattr(st, "secrets") and "UPSTAGE_API_KEY" in st.secrets:
+    api_key_found = True
+elif os.getenv("UPSTAGE_API_KEY"):
+    api_key_found = True
+
+if not api_key_found:
+    st.error("UPSTAGE_API_KEY가 설정되지 않았습니다. 로컬에서는 .env 파일에, Streamlit Cloud에서는 Secrets에 API 키를 등록해주세요.")
     st.stop()
 
 # API 키가 확인된 후에 LangGraph 관련 모듈을 import 합니다.
