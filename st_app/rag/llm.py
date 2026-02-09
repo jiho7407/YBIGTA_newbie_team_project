@@ -1,7 +1,10 @@
 """
-LLM 호출 (현종 담당)
-
-RAG 파이프라인에서 사용하는 LLM 호출 로직입니다.
+LLM 호출 (현종 작성 → 구조 통합)
 """
 
-# TODO: 현종 구현
+from langchain_upstage import ChatUpstage
+
+
+def get_llm():
+    """Upstage Solar Mini 모델 인스턴스를 반환합니다."""
+    return ChatUpstage(model="solar-mini", temperature=0)
