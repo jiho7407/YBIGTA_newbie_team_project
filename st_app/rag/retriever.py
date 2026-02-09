@@ -48,6 +48,7 @@ def get_retriever(site_filter="all", k=3):
     search_kwargs = {"k": k}
 
     if site_filter and site_filter.lower() != "all":
-        search_kwargs["filter"] = {"source": site_filter.lower()}
+        # FAISS는 필터 값으로 리스트를 예상할 수 있으므로, 리스트로 감싸줍니다.
+        search_kwargs["filter"] = {"source": [site_filter.lower()]}
 
     return _vectorstore.as_retriever(search_kwargs=search_kwargs)
