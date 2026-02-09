@@ -6,19 +6,20 @@ Streamlit UI → LangGraph 실행 진입점
 
 import os
 import streamlit as st
-from dotenv import load_dotenv
 from langchain_core.messages import HumanMessage, AIMessage
-
-load_dotenv()
 
 st.set_page_config(page_title="기생충 리뷰 챗봇", page_icon="🎬", layout="centered")
 st.title("🎬 기생충(Parasite) 리뷰 분석 챗봇")
 
-# --- API 키 체크 ---
-if not os.getenv("UPSTAGE_API_KEY"):
-    st.error("UPSTAGE_API_KEY가 설정되지 않았습니다. .env 파일 또는 Streamlit Secrets를 확인하세요.")
+# --- API 키 체크 (Streamlit Cloud 환경) ---
+# Streamlit Cloud의 Secrets에 'UPSTAGE_API_KEY'가 설정되어 있는지 확인합니다.
+# 이 키는 자동으로 환경 변수로 주입됩니다.
+if "UPSTAGE_API_KEY" not in st.secrets:
+    st.error("UPSTAGE_API_KEY가 설정되지 않았습니다. Streamlit Cloud의 'Secrets'에 API 키를 등록해주세요.")
     st.stop()
 
+# API 키가 확인된 후에 LangGraph 관련 모듈을 import 합니다.
+# 이는 API 키가 없을 때 불필요한 초기화를 방지합니다.
 from st_app.graph.router import chatbot_graph  # noqa: E402
 
 # --- 사이드바 ---
@@ -62,6 +63,7 @@ if prompt := st.chat_input("기생충 리뷰에 대해 질문해보세요"):
     with st.chat_message("assistant"):
         with st.spinner("분석 중..."):
             try:
+                # chatbot_graph는 API 키를 자동으로 환경변수에서 읽어 사용합니다.
                 result = chatbot_graph.invoke({
                     "messages": list(st.session_state.langchain_messages),
                     "intent": "",
