@@ -15,12 +15,94 @@ Subject Info 노드 (재훈 담당)
 - 별도 DB 테이블 조회
 """
 
-from utils.state import ChatState
 
-
+import json
+import os
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_upstage import ChatUpstage
+from utils.state import ChatState  
 def subject_info_node(state: ChatState) -> dict:
-    # TODO: 재훈 구현
-    # 1. 사용자 질문 분석
-    # 2. 기생충 영화 정보에서 관련 내용 추출
-    # 3. 문자열로 포맷팅하여 반환
-    return {"subject_context": ""}
+    """
+    영화 '기생충'의 상세 정보를 담은 Context를 생성하고,
+    LLM을 통해 사용자 질문에 답변하는 노드입니다.
+    """
+    
+    # 1. 사용자 질문 분석 (State의 messages 리스트에서 가장 최근 메시지 가져오기)
+    # LangGraph의 add_messages 어노테이션 덕분에 리스트의 마지막이 항상 최신 질문입니다.
+    question = state["messages"][-1].content
+
+    # 2. 기생충 영화 정보 데이터 (Rich Data)
+    movie_data = {
+        "basic_info": {
+            "title": "기생충 (Parasite)",
+            "director": "봉준호",
+            "screenwriter": "봉준호, 한진원",
+            "genre": ["블랙 코미디", "스릴러", "드라마"],
+            "release_date": "2019년 5월 30일 (한국)",
+            "runtime": "131분",
+            "rating": "15세 이상 관람가"
+        },
+        "cast_and_characters": {
+            "송강호": "김기택 역 (전원 백수 가족의 가장)",
+            "이선균": "박동익 역 (글로벌 IT 기업 CEO)",
+            "조여정": "최연교 역 (박동익의 아내, 심플한 성격)",
+            "최우식": "김기우 역 (기택의 장남, 과외 선생님)",
+            "박소담": "김기정 역 (기택의 장녀, 미술 치료 선생님)",
+            "이정은": "국문광 역 (박사장네 입주 가사도우미)",
+            "장혜진": "충숙 역 (기택의 아내, 전직 해머던지기 선수)",
+            "박명훈": "오근세 역 (문광의 남편, 지하실 남자)"
+        },
+        "awards": {
+            "Academy_Awards_2020": ["작품상", "감독상", "각본상", "국제장편영화상 (4관왕)"],
+            "Cannes_Film_Festival_2019": ["황금종려상 (한국 영화 최초)"],
+            "Golden_Globe_2020": ["외국어 영화상"]
+        },
+        "box_office": {
+            "budget": "약 135억 원",
+            "revenue_korea": "약 874억 원 (관객수 약 1,031만 명)",
+            "revenue_worldwide": "약 2억 6,300만 달러 (약 3,000억 원 이상)"
+        },
+        "plot_summary": "전원 백수로 살 길 막막한 기택네 가족. 장남 기우가 명문대생 친구의 소개로 글로벌 IT 기업 CEO 박사장네 고액 과외 면접을 보러 가면서 시작되는 이야기. 두 가족의 만남은 걷잡을 수 없는 사건으로 번져간다.",
+        "trivia": [
+            "영화 속 '짜파구리(Ram-don)'는 채끝살을 넣은 고급 버전으로, 빈부격차를 보여주는 장치다.",
+            "기택네 반지하 집과 박사장네 저택은 실제 집이 아니라 전주 영화종합촬영소에 지어진 세트장이다.",
+            "영화에 나오는 산수경석(수석)은 기우가 신분 상승을 꿈꾸게 되는 매개체이자 욕망을 상징한다.",
+            "봉준호 감독은 이 영화를 '계단 영화'라고 불렀으며, 계단은 계급의 차이를 시각적으로 보여준다."
+        ]
+    }
+
+    # 3. Context 문자열 생성 (ChatState의 subject_context에 저장될 값)
+    subject_context_str = json.dumps(movie_data, ensure_ascii=False, indent=2)
+
+    # 4. LLM 호출 설정
+    llm = ChatUpstage(api_key=os.environ.get("UPSTAGE_API_KEY"))
+
+    prompt = ChatPromptTemplate.from_messages([
+        ("system", """당신은 영화 '기생충' 전문 AI 도슨트입니다.
+        아래 제공된 [상세 영화 정보]를 바탕으로 사용자의 질문에 답변해 주세요.
+        
+        [답변 가이드]
+        1. 질문과 관련된 정보를 JSON 데이터에서 찾아 자연스러운 문장으로 설명하세요.
+        2. 등장인물 관련 질문 시, 배우 이름과 배역 설명을 함께 언급하세요.
+        3. 정보에 없는 내용은 "죄송합니다, 해당 정보는 데이터에 없습니다."라고 답하세요.
+        
+        [상세 영화 정보]
+        {context}"""),
+        ("human", "{question}"),
+    ])
+
+    chain = prompt | llm
+    
+    # LLM 실행
+    response_message = chain.invoke({
+        "context": subject_context_str,
+        "question": question
+    })
+
+    # 5. 결과 반환 
+    # messages: add_messages reducer가 작동하므로 리스트로 반환하면 자동 append 됩니다.
+    # subject_context: 문자열로 변환된 영화 정보를 저장합니다.
+    return {
+        "subject_context": subject_context_str,
+        "messages": [response_message]
+    }
