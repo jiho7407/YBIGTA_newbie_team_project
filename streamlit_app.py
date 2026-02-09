@@ -8,6 +8,7 @@ import os
 import streamlit as st
 from langchain_core.messages import HumanMessage, AIMessage
 from dotenv import load_dotenv
+from streamlit.errors import StreamlitSecretNotFoundError
 
 # .env 파일에서 환경 변수를 로드합니다 (로컬 개발용).
 load_dotenv()
@@ -16,12 +17,19 @@ st.set_page_config(page_title="기생충 리뷰 챗봇", page_icon="🎬", layou
 st.title("🎬 기생충(Parasite) 리뷰 분석 챗봇")
 
 # --- API 키 체크 (Streamlit Cloud & Local) ---
-# Streamlit Cloud에서는 st.secrets을, 로컬에서는 .env 파일을 통해 API 키를 확인합니다.
 api_key_found = False
-if hasattr(st, "secrets") and "UPSTAGE_API_KEY" in st.secrets:
-    api_key_found = True
-elif os.getenv("UPSTAGE_API_KEY"):
-    api_key_found = True
+try:
+    # Streamlit Cloud의 secrets에 키가 있는지 확인
+    if st.secrets.get("UPSTAGE_API_KEY"):
+        api_key_found = True
+except StreamlitSecretNotFoundError:
+    # 로컬 환경에서 secrets.toml 파일이 없으면 이 오류가 발생하므로 무시합니다.
+    pass
+
+# secrets에 키가 없으면, 환경 변수(.env 파일)에서 확인
+if not api_key_found:
+    if os.getenv("UPSTAGE_API_KEY"):
+        api_key_found = True
 
 if not api_key_found:
     st.error("UPSTAGE_API_KEY가 설정되지 않았습니다. 로컬에서는 .env 파일에, Streamlit Cloud에서는 Secrets에 API 키를 등록해주세요.")
